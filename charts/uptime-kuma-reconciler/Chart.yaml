@@ -1,0 +1,17 @@
+apiVersion: v2
+name: uptime-kuma-reconciler
+description: A Kubernetes controller that auto-discovers Ingress resources and manages Uptime Kuma monitors
+type: application
+version: 0.1.0
+appVersion: "0.1.0"
+keywords:
+  - uptime-kuma
+  - monitoring
+  - kubernetes
+  - ingress
+  - auto-discovery
+home: https://github.com/moellere/uptime-kuma-reconciler
+sources:
+  - https://github.com/moellere/uptime-kuma-reconciler
+maintainers:
+  - name: moellere

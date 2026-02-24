@@ -1,0 +1,82 @@
+# Example Ingress resource with Uptime Kuma reconciler annotations
+#
+# The reconciler will automatically create an HTTP monitor in Uptime Kuma
+# for any Ingress with the `uptime-kuma.io/monitor: "true"` annotation.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: my-app
+  namespace: default
+  annotations:
+    # Required: enable auto-discovery for this Ingress
+    uptime-kuma.io/monitor: "true"
+
+    # Optional: monitor type (default: http)
+    # Supported: http, keyword, ping, port
+    uptime-kuma.io/monitor-type: "http"
+
+    # Optional: check interval in seconds (default: 60)
+    uptime-kuma.io/monitor-interval: "30"
+
+    # Optional: group name in Uptime Kuma (creates group if it doesn't exist)
+    uptime-kuma.io/monitor-group: "Web Services"
+spec:
+  tls:
+    - hosts:
+        - app.example.com
+      secretName: app-tls
+  rules:
+    - host: app.example.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: my-app
+                port:
+                  number: 80
+---
+# Example Traefik IngressRoute with annotations
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: my-api
+  namespace: default
+  annotations:
+    uptime-kuma.io/monitor: "true"
+    uptime-kuma.io/monitor-interval: "30"
+    uptime-kuma.io/monitor-group: "APIs"
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`api.example.com`)
+      kind: Rule
+      services:
+        - name: my-api
+          port: 8080
+  tls: {}
+---
+# Example Gateway API HTTPRoute with annotations
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: my-service
+  namespace: default
+  annotations:
+    uptime-kuma.io/monitor: "true"
+    uptime-kuma.io/monitor-group: "Services"
+spec:
+  parentRefs:
+    - name: my-gateway
+  hostnames:
+    - service.example.com
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: my-service
+          port: 80

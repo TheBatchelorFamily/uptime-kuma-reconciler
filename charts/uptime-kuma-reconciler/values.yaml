@@ -1,0 +1,76 @@
+# Uptime Kuma connection settings
+kumaUrl: "http://uptime-kuma.default.svc.cluster.local:3001"
+
+# Reconciler settings
+resyncInterval: "300"    # Seconds between full reconciliation cycles
+logLevel: "INFO"         # DEBUG, INFO, WARNING, ERROR
+
+# Credentials - provide via existingSecret or inline (not recommended)
+credentials:
+  # Name of an existing Kubernetes Secret containing 'username' and 'password' keys
+  existingSecret: ""
+  # Only used if existingSecret is empty (NOT recommended for production)
+  username: ""
+  password: ""
+
+# Container image
+image:
+  repository: python
+  tag: "3.11-slim"
+  pullPolicy: IfNotPresent
+
+  # Set to a custom image if you've built the Dockerfile:
+  # repository: ghcr.io/moellere/uptime-kuma-reconciler
+  # tag: "0.1.0"
+  # useCustomImage: true
+
+  # When false, uses python:3.11-slim and installs deps at startup (simpler, no build needed)
+  # When true, assumes the image already has reconciler.py and deps baked in
+  useCustomImage: false
+
+# Resource limits
+resources:
+  requests:
+    cpu: 50m
+    memory: 64Mi
+  limits:
+    cpu: 200m
+    memory: 128Mi
+
+# Service account
+serviceAccount:
+  create: true
+  name: ""
+  annotations: {}
+
+# Pod settings
+podAnnotations: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+# Static monitors - define monitors for non-Kubernetes hosts
+# These are mounted as a ConfigMap at /config/monitors.yaml
+staticMonitors:
+  enabled: false
+  monitors: []
+  # Example:
+  # monitors:
+  #   - name: My Web App
+  #     type: http
+  #     url: https://example.com
+  #     group: Web Services
+  #     interval: 60
+  #
+  #   - name: Database Server
+  #     type: ping
+  #     hostname: 192.168.1.100
+  #     group: Infrastructure
+  #     interval: 60
+  #
+  #   - name: SSH Server
+  #     type: port
+  #     hostname: 192.168.1.50
+  #     port: 22
+  #     group: Infrastructure
+  #     interval: 60

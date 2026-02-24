@@ -1,0 +1,70 @@
+# Example static monitors configuration
+# Mount this as a ConfigMap at /config/monitors.yaml
+monitors:
+  # ========================================
+  # Web Services (HTTP monitors)
+  # ========================================
+  - name: My Web App
+    type: http
+    url: https://app.example.com
+    group: Web Services
+    interval: 60
+
+  - name: API Gateway
+    type: http
+    url: https://api.example.com/health
+    group: Web Services
+    interval: 30
+
+  - name: Admin Dashboard
+    type: http
+    url: https://admin.example.com
+    group: Web Services
+    interval: 60
+
+  # ========================================
+  # Infrastructure (Ping monitors)
+  # ========================================
+  - name: Database Server
+    type: ping
+    hostname: 192.168.1.10
+    group: Infrastructure
+    interval: 60
+
+  - name: NAS Storage
+    type: ping
+    hostname: 192.168.1.20
+    group: Infrastructure
+    interval: 60
+
+  # ========================================
+  # Network (Ping monitors)
+  # ========================================
+  - name: Core Router
+    type: ping
+    hostname: 192.168.1.1
+    group: Network
+    interval: 60
+
+  - name: Access Point
+    type: ping
+    hostname: 192.168.1.2
+    group: Network
+    interval: 60
+
+  # ========================================
+  # Services (Port monitors)
+  # ========================================
+  - name: SSH Server
+    type: port
+    hostname: 192.168.1.50
+    port: 22
+    group: Services
+    interval: 60
+
+  - name: MQTT Broker
+    type: port
+    hostname: 192.168.1.60
+    port: 1883
+    group: Services
+    interval: 60
