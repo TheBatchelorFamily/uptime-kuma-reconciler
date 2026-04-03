@@ -399,7 +399,7 @@ def main():
                 tag_id = ensure_tag(api)
                 watch_loop(api, tag_id)
         except Exception as e:
-            log.error("Connection error: %s — retrying in 30s", e)
+            log.exception("Connection error while connecting to Uptime Kuma at %s; retrying in 30s", kuma_url)
             shutdown_event.wait(timeout=30)
 
     log.info("Reconciler shut down.")
