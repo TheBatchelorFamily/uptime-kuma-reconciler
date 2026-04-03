@@ -1,9 +1,9 @@
 apiVersion: v2
 name: uptime-kuma-reconciler
-description: A Kubernetes controller that auto-discovers Ingress resources and manages Uptime Kuma monitors
+description: A Kubernetes controller that auto-discovers Ingress resources and manages Uptime Kuma monitors (compatible with uptime-kuma-api v1.2.1+ and Uptime Kuma v2.x)
 type: application
-version: 0.1.0
-appVersion: "0.1.0"
+version: 0.2.0
+appVersion: "0.2.0"
 keywords:
   - uptime-kuma
   - monitoring

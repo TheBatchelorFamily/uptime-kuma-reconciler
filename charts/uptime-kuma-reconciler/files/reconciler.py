@@ -7,6 +7,8 @@ updates, and deletes HTTP monitors in Uptime Kuma.
 
 Also reconciles static monitors defined in /config/monitors.yaml for
 non-Kubernetes hosts (Proxmox nodes, VMs, network gateways, etc.).
+
+Updated for uptime-kuma-api v1.2.1+ compatibility and Uptime Kuma v2.x support.
 """
 
 import logging
@@ -18,7 +20,7 @@ from threading import Event
 
 import yaml
 from kubernetes import client, config, watch
-from uptime_kuma_api import UptimeKumaApi, MonitorType
+from uptime_kuma_api import UptimeKumaApi, MonitorType, MonitorStatus
 
 logging.basicConfig(
     level=os.environ.get("LOG_LEVEL", "INFO").upper(),
@@ -46,13 +48,6 @@ shutdown_event = Event()
 def signal_handler(signum, frame):
     log.info("Received signal %s, shutting down...", signum)
     shutdown_event.set()
-
-
-def connect_kuma(url, username, password):
-    api = UptimeKumaApi(url)
-    api.login(username, password)
-    log.info("Connected to Uptime Kuma at %s", url)
-    return api
 
 
 def get_managed_monitors(api):
@@ -163,6 +158,7 @@ def reconcile_resource(api, resource, managed, tag_id):
                 kwargs = dict(
                     type=monitor_type, name=key, url=url,
                     interval=interval, retryInterval=60, maxretries=3,
+                    conditions=[],  # Required for newer Uptime Kuma versions
                 )
                 if parent_id is not None:
                     kwargs["parent"] = parent_id
@@ -175,6 +171,7 @@ def reconcile_resource(api, resource, managed, tag_id):
             kwargs = dict(
                 type=monitor_type, name=key, url=url,
                 interval=interval, retryInterval=60, maxretries=3,
+                conditions=[],  # Required for newer Uptime Kuma versions
             )
             if parent_id is not None:
                 kwargs["parent"] = parent_id
@@ -227,6 +224,7 @@ def reconcile_static_monitors(api, managed, tag_id):
             interval=interval,
             retryInterval=60,
             maxretries=3,
+            conditions=[],  # Required for newer Uptime Kuma versions
         )
 
         if monitor_type == MonitorType.HTTP:
@@ -395,9 +393,11 @@ def main():
 
     while not shutdown_event.is_set():
         try:
-            api = connect_kuma(kuma_url, username, password)
-            tag_id = ensure_tag(api)
-            watch_loop(api, tag_id)
+            with UptimeKumaApi(kuma_url, timeout=30) as api:
+                api.login(username, password)
+                log.info("Connected to Uptime Kuma at %s", kuma_url)
+                tag_id = ensure_tag(api)
+                watch_loop(api, tag_id)
         except Exception as e:
             log.error("Connection error: %s — retrying in 30s", e)
             shutdown_event.wait(timeout=30)

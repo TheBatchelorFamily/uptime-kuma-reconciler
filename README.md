@@ -7,6 +7,8 @@ A Kubernetes controller that automatically discovers Ingress resources and manag
 - **Reconciliation loop** — Continuously syncs state, creating new monitors, updating changed ones, and removing orphans
 - **Safe tagging** — All managed monitors are tagged with `managed-by-reconciler` so manually-created monitors are never touched
 
+**Compatible with uptime-kuma-api v1.2.1+ and Uptime Kuma 1.21.3+ (including v2.x)**
+
 ## Why Not kuma-ingress-watcher?
 
 [kuma-ingress-watcher](https://github.com/SQuent/kuma-ingress-watcher) is a great project that covers Ingress and IngressRoute auto-discovery. This reconciler was built to fill gaps that it doesn't cover:
