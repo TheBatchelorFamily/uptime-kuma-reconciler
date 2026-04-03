@@ -8,7 +8,7 @@ updates, and deletes HTTP monitors in Uptime Kuma.
 Also reconciles static monitors defined in /config/monitors.yaml for
 non-Kubernetes hosts (Proxmox nodes, VMs, network gateways, etc.).
 
-Updated for uptime-kuma-api v1.2.1+ compatibility and Uptime Kuma v2.x support.
+Updated for uptime-kuma-api-v2 v1.0.1+ compatibility and Uptime Kuma v2.x support.
 """
 
 import logging
